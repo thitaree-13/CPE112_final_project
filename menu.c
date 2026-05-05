@@ -35,7 +35,6 @@ void menu()
             loginUser();
             break;
         case 3:
-            printf("DEBUG: calling addBook\n");
             addBook();
             break;
         case 4:
