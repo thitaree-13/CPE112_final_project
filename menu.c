@@ -24,6 +24,7 @@ void menu()
         printf("10. Exit\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
+        getchar();
 
         switch (choice)
         {
@@ -34,6 +35,7 @@ void menu()
             loginUser();
             break;
         case 3:
+            printf("DEBUG: calling addBook\n");
             addBook();
             break;
         case 4:
@@ -59,5 +61,5 @@ void menu()
             break;
         }
 
-    } while (choice != 7);
+    } while (choice != 10);
 }
