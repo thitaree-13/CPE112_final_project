@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "hash_search.h"
+#include "search.h"
 
 // our hash table array
 Book* hashTable[TABLE_SIZE];
