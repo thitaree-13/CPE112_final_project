@@ -6,102 +6,139 @@
 #include "search.h"
 
 // ===== GLOBAL VARIABLE =====
+
 Book* head = NULL;
 
-// ===== FUNCTIONS =====
+// ===== ADD BOOK =====
 
-void addBook() {
+void addBook()
+{
     Book* newBook = (Book*)malloc(sizeof(Book));
 
-    if (newBook == NULL) {
+    if (newBook == NULL)
+    {
         printf("Memory allocation failed!\n");
         return;
     }
 
     printf("Enter Book ID: ");
+
     scanf("%d", &newBook->id);
-    getchar(); // clear newline
+    getchar();
 
     printf("Enter Title: ");
+
     fgets(newBook->title, 100, stdin);
     newBook->title[strcspn(newBook->title, "\n")] = 0;
 
     printf("Enter Author: ");
+
     fgets(newBook->author, 100, stdin);
     newBook->author[strcspn(newBook->author, "\n")] = 0;
 
     printf("Enter Category: ");
+
     fgets(newBook->category, 50, stdin);
     newBook->category[strcspn(newBook->category, "\n")] = 0;
 
     newBook->available = 1;
 
-    // Insert at head (O(1))
+    // initialize pointers
+    newBook->next = NULL;
+    newBook->hashNext = NULL;
+
+    // insert into linked list
     newBook->next = head;
     head = newBook;
 
+    // insert into hash table
     insertHash(newBook);
+
+    // save file
     saveBooksToFile();
 
     printf("Book added successfully!\n");
 }
 
-// Time Complexity: O(n)
-void deleteBook() {
+// ===== DELETE BOOK =====
+
+void deleteBook()
+{
     int id;
+
     printf("Enter Book ID to delete: ");
+
     scanf("%d", &id);
 
-    Book *temp = head, *prev = NULL;
+    Book* temp = head;
+    Book* prev = NULL;
 
-    while (temp != NULL && temp->id != id) {
+    while (temp != NULL && temp->id != id)
+    {
         prev = temp;
         temp = temp->next;
     }
 
-    if (temp == NULL) {
+    if (temp == NULL)
+    {
         printf("Book not found.\n");
         return;
     }
 
-    if (prev == NULL) {
+    // remove from linked list
+    if (prev == NULL)
+    {
         head = temp->next;
-    } else {
+    }
+    else
+    {
         prev->next = temp->next;
     }
-    
+
+    // remove from hash table
     deleteHash(id);
+
+    // free memory
     free(temp);
 
+    // update file
     saveBooksToFile();
+
     printf("Book deleted successfully!\n");
 }
 
-// Time Complexity: O(n)
-void displayBooks() {
+// ===== DISPLAY BOOKS =====
+
+void displayBooks()
+{
     Book* temp = head;
 
-    if (temp == NULL) {
+    if (temp == NULL)
+    {
         printf("No books available.\n");
         return;
     }
 
     printf("\n===== Book List =====\n");
 
-    while (temp != NULL) {
+    while (temp != NULL)
+    {
         printf("\nID: %d\n", temp->id);
         printf("Title: %s\n", temp->title);
         printf("Author: %s\n", temp->author);
         printf("Category: %s\n", temp->category);
-        printf("Status: %s\n", temp->available ? "Available" : "Borrowed");
+        printf("Status: %s\n",
+               temp->available ? "Available" : "Borrowed");
 
         temp = temp->next;
     }
 }
 
+// ===== SAVE FILE =====
+
 void saveBooksToFile()
 {
-    FILE *fp = fopen("books.txt", "w");
+    FILE* fp = fopen("books.txt", "w");
 
     if (fp == NULL)
     {
@@ -109,7 +146,7 @@ void saveBooksToFile()
         return;
     }
 
-    Book *temp = head;
+    Book* temp = head;
 
     while (temp != NULL)
     {
@@ -127,9 +164,11 @@ void saveBooksToFile()
     fclose(fp);
 }
 
+// ===== LOAD FILE =====
+
 void loadBooksFromFile()
 {
-    FILE *fp = fopen("books.txt", "r");
+    FILE* fp = fopen("books.txt", "r");
 
     if (fp == NULL)
     {
@@ -138,7 +177,7 @@ void loadBooksFromFile()
 
     while (1)
     {
-        Book *newBook = (Book*)malloc(sizeof(Book));
+        Book* newBook = (Book*)malloc(sizeof(Book));
 
         if (newBook == NULL)
         {
@@ -146,12 +185,12 @@ void loadBooksFromFile()
         }
 
         int result = fscanf(fp,
-                             "%d|%99[^|]|%99[^|]|%49[^|]|%d\n",
-                             &newBook->id,
-                             newBook->title,
-                             newBook->author,
-                             newBook->category,
-                             &newBook->available);
+                            "%d|%99[^|]|%99[^|]|%49[^|]|%d\n",
+                            &newBook->id,
+                            newBook->title,
+                            newBook->author,
+                            newBook->category,
+                            &newBook->available);
 
         if (result != 5)
         {
@@ -159,9 +198,15 @@ void loadBooksFromFile()
             break;
         }
 
+        // initialize pointers
+        newBook->next = NULL;
+        newBook->hashNext = NULL;
+
+        // insert into linked list
         newBook->next = head;
         head = newBook;
 
+        // insert into hash table
         insertHash(newBook);
     }
 
