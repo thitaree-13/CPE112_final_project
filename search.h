@@ -33,5 +33,7 @@ void  searchByAvailability(Book* head, int available); // 1 = available, 0 = bor
 // sort functions
 void sortBooksByTitle(Book* head);
 void sortBooksByID(Book* head);
+void printBook(const Book* book);
+void searchMenu();
 
 #endif

@@ -20,6 +20,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "search.h"
+#include "book_system.h"
 
 // our hash table array
 Book* hashTable[TABLE_SIZE];
@@ -39,45 +40,61 @@ int hashFunction(int id) {
 
 // insert a book into the hash table
 // we use chaining so if two books have same index, we link them
-void insertHash(Book* book) {
+// void insertHash(Book* book) {
+//     int index = hashFunction(book->id);
+
+//     // make a new node
+//     Book* newNode = (Book*)malloc(sizeof(Book));
+//     if (newNode == NULL) {
+//         printf("Memory allocation failed!\n");
+//         return;
+//     }
+
+//     // copy book data into new node
+//     *newNode = *book;
+
+//     // put new node at front of chain
+//     newNode->hashNext = hashTable[index];
+//     hashTable[index] = newNode;
+// }
+
+
+void insertHash(Book* book)
+{
     int index = hashFunction(book->id);
 
-    // make a new node
-    Book* newNode = (Book*)malloc(sizeof(Book));
-    if (newNode == NULL) {
-        printf("Memory allocation failed!\n");
-        return;
-    }
+    book->hashNext = hashTable[index];
 
-    // copy book data into new node
-    *newNode = *book;
-
-    // put new node at front of chain
-    newNode->next = hashTable[index];
-    hashTable[index] = newNode;
+    hashTable[index] = book;
 }
 
 // delete a book from hash table by ID
-void deleteHash(int id) {
+void deleteHash(int id)
+{
     int index = hashFunction(id);
+
     Book* curr = hashTable[index];
     Book* prev = NULL;
 
-    // search through the chain
-    while (curr != NULL) {
-        if (curr->id == id) {
-            // found it, remove from chain
-            if (prev == NULL) {
-                hashTable[index] = curr->next;
-            } else {
-                prev->next = curr->next;
+    while (curr != NULL)
+    {
+        if (curr->id == id)
+        {
+            if (prev == NULL)
+            {
+                hashTable[index] = curr->hashNext;
             }
-            free(curr);
+            else
+            {
+                prev->hashNext = curr->hashNext;
+            }
+
             printf("Book ID %d removed from hash table.\n", id);
             return;
         }
+
         prev = curr;
-        curr = curr->next;
+        curr = curr->hashNext;
     }
 
     printf("Book ID %d not found.\n", id);
@@ -92,7 +109,7 @@ Book* searchByID(int id) {
         if (temp->id == id) {
             return temp; // found!
         }
-        temp = temp->next;
+        temp = temp->hashNext;
     }
 
     return NULL; // not found
@@ -125,7 +142,7 @@ static int containsIgnoreCase(const char* haystack, const char* needle) {
 }
 
 // print one book details
-static void printBook(const Book* book) {
+void printBook(const Book* book) {
     printf("-----------------------------\n");
     printf("ID       : %d\n",  book->id);
     printf("Title    : %s\n",  book->title);
@@ -300,4 +317,90 @@ void sortBooksByID(Book* head) {
     printf("Total: %d book(s).\n", n);
 
     free(arr); // don't forget to free!
+}
+
+void searchMenu()
+{
+    int choice;
+    int id;
+    char keyword[100];
+
+    printf("\n===== SEARCH MENU =====\n");
+    printf("1. Search by ID\n");
+    printf("2. Search by Title\n");
+    printf("3. Search by Author\n");
+    printf("4. Search by Category\n");
+    printf("5. Show Available Books\n");
+    printf("6. Show Borrowed Books\n");
+    printf("7. Sort by Title\n");
+    printf("8. Sort by ID\n");
+
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+    getchar();
+
+    switch (choice)
+    {
+    case 1:
+    {
+        printf("Enter Book ID: ");
+        scanf("%d", &id);
+
+        Book* found = searchByID(id);
+
+        if (found != NULL)
+        {
+            printBook(found);
+        }
+        else
+        {
+            printf("Book not found.\n");
+        }
+
+        break;
+    }
+
+    case 2:
+        printf("Enter title keyword: ");
+        fgets(keyword, 100, stdin);
+        keyword[strcspn(keyword, "\n")] = 0;
+
+        searchByTitle(head, keyword);
+        break;
+
+    case 3:
+        printf("Enter author keyword: ");
+        fgets(keyword, 100, stdin);
+        keyword[strcspn(keyword, "\n")] = 0;
+
+        searchByAuthor(head, keyword);
+        break;
+
+    case 4:
+        printf("Enter category keyword: ");
+        fgets(keyword, 100, stdin);
+        keyword[strcspn(keyword, "\n")] = 0;
+
+        searchByCategory(head, keyword);
+        break;
+
+    case 5:
+        searchByAvailability(head, 1);
+        break;
+
+    case 6:
+        searchByAvailability(head, 0);
+        break;
+
+    case 7:
+        sortBooksByTitle(head);
+        break;
+
+    case 8:
+        sortBooksByID(head);
+        break;
+
+    default:
+        printf("Invalid choice.\n");
+    }
 }

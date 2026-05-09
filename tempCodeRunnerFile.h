@@ -9,8 +9,6 @@ typedef struct Book {
     char category[50];
     int available;          // 1 = available, 0 = borrowed
     struct Book* next;
-    struct Book* hashNext;
-
 } Book;
 
 // ===== GLOBAL HEAD =====
@@ -20,8 +18,5 @@ extern Book* head;
 void addBook();
 void deleteBook();
 void displayBooks();
-
-void saveBooksToFile();
-void loadBooksFromFile();
 
 #endif

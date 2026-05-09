@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "book_system.h"
+#include "search.h"
 
 // ===== GLOBAL VARIABLE =====
 Book* head = NULL;
@@ -38,6 +40,9 @@ void addBook() {
     newBook->next = head;
     head = newBook;
 
+    insertHash(newBook);
+    saveBooksToFile();
+
     printf("Book added successfully!\n");
 }
 
@@ -64,8 +69,11 @@ void deleteBook() {
     } else {
         prev->next = temp->next;
     }
-
+    
+    deleteHash(id);
     free(temp);
+
+    saveBooksToFile();
     printf("Book deleted successfully!\n");
 }
 
@@ -89,4 +97,73 @@ void displayBooks() {
 
         temp = temp->next;
     }
+}
+
+void saveBooksToFile()
+{
+    FILE *fp = fopen("books.txt", "w");
+
+    if (fp == NULL)
+    {
+        printf("Cannot open file.\n");
+        return;
+    }
+
+    Book *temp = head;
+
+    while (temp != NULL)
+    {
+        fprintf(fp,
+                "%d|%s|%s|%s|%d\n",
+                temp->id,
+                temp->title,
+                temp->author,
+                temp->category,
+                temp->available);
+
+        temp = temp->next;
+    }
+
+    fclose(fp);
+}
+
+void loadBooksFromFile()
+{
+    FILE *fp = fopen("books.txt", "r");
+
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    while (1)
+    {
+        Book *newBook = (Book*)malloc(sizeof(Book));
+
+        if (newBook == NULL)
+        {
+            break;
+        }
+
+        int result = fscanf(fp,
+                             "%d|%99[^|]|%99[^|]|%49[^|]|%d\n",
+                             &newBook->id,
+                             newBook->title,
+                             newBook->author,
+                             newBook->category,
+                             &newBook->available);
+
+        if (result != 5)
+        {
+            free(newBook);
+            break;
+        }
+
+        newBook->next = head;
+        head = newBook;
+
+        insertHash(newBook);
+    }
+
+    fclose(fp);
 }
