@@ -1,7 +1,14 @@
-#include <stdio.h>
 #include "menu.h"
+#include "search.h"
+#include "book_system.h"
 
-int main() {
-    menu();   // start the system
+int main()
+{
+    initHashTable();
+
+    loadBooksFromFile();
+
+    menu();
+
     return 0;
 }
