@@ -1,40 +1,15 @@
-#ifndef BORROW_SYSTEM_H
-#define BORROW_SYSTEM_H
+#ifndef BOOK_SYSTEM_H
+#define BOOK_SYSTEM_H
 
-#include <stdbool.h>
-
-//constant
-
-#define MAX_BOOKS 100
-#define MAX_TITLE_LEN 100
-#define MAX_WAITLIST 50
-
-//new
-#define MAX_USERS 100
-#define MAX_BORROW_LIMIT 5
-
-//waiting queue
-
-typedef struct {
-    int user_ids[MAX_WAITLIST];
-    int front;
-    int rear;
-    int count;
-} WaitQueue;
-
-//book
-
-typedef struct {
-
-    int book_id;
-
-    char title[MAX_TITLE_LEN];
-
-    bool is_borrowed;
-
-    int borrowed_by;
-
-    WaitQueue waitlist;
+// ===== STRUCT =====
+typedef struct Book {
+    int id;
+    char title[100];
+    char author[100];
+    char category[50];
+    int available;          // 1 = available, 0 = borrowed
+    struct Book* next;
+    struct Book* hashNext;
 
 } Book;
 
@@ -75,5 +50,8 @@ bool is_book_available(Library *lib,
 
 int get_waitlist_count(Library *lib,
                        int book_id);
+
+void saveBooksToFile();
+void loadBooksFromFile();
 
 #endif
