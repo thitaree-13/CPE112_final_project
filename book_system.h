@@ -1,26 +1,33 @@
 #ifndef BOOK_SYSTEM_H
 #define BOOK_SYSTEM_H
 
-// ===== STRUCT =====
-typedef struct Book {
+typedef struct Book
+{
     int id;
+
     char title[100];
     char author[100];
     char category[50];
-    int available;          // 1 = available, 0 = borrowed
+
+    int available;
+
+    // linked list pointer
     struct Book* next;
+
+    // hash table pointer
     struct Book* hashNext;
 
 } Book;
 
-// ===== GLOBAL HEAD =====
+// global head
 extern Book* head;
 
-// ===== FUNCTIONS =====
+// functions
 void addBook();
 void deleteBook();
 void displayBooks();
 
+// file handling
 void saveBooksToFile();
 void loadBooksFromFile();
 
