@@ -7,157 +7,197 @@
 User* userHead = NULL;
 User* currentUser = NULL;
 
-// ===== FUNCTIONS =====
+// ===== LOAD USERS FROM FILE =====
+void loadUsers() {
 
+    FILE *fp = fopen("User.txt", "r");
+
+    if (fp == NULL) {
+        return;
+    }
+
+    User temp;
+
+    while (fscanf(fp, "%d %s %s %d",
+                  &temp.userID,
+                  temp.username,
+                  temp.password,
+                  &temp.borrowedCount) == 4)
+    {
+
+        User* newUser = (User*)malloc(sizeof(User));
+
+        *newUser = temp;
+        newUser->next = NULL;
+
+        // add to linked list
+        if (userHead == NULL) {
+            userHead = newUser;
+        }
+        else {
+            User* current = userHead;
+
+            while (current->next != NULL) {
+                current = current->next;
+            }
+
+            current->next = newUser;
+        }
+    }
+
+    fclose(fp);
+}
+
+// ===== SAVE USER =====
+void saveUser(User* user) {
+
+    FILE *fp = fopen("User.txt", "a");
+
+    if (fp == NULL) {
+        printf("Cannot open file.\n");
+        return;
+    }
+
+    fprintf(fp, "%d %s %s %d\n",
+            user->userID,
+            user->username,
+            user->password,
+            user->borrowedCount);
+
+    fclose(fp);
+}
+
+// ===== REGISTER =====
 void registerUser() {
-    // TODO:
+
+    char name[50];
+    char pass[50];
+
+    printf("Create username: ");
+    scanf("%49s", name);
+
+    // check duplicate
+    User* current = userHead;
+
+    while (current != NULL) {
+
+        if (strcmp(current->username, name) == 0) {
+            printf("Username already used.\n");
+            return;
+        }
+
+        current = current->next;
+    }
+
+    printf("Create password: ");
+    scanf("%49s", pass);
+
     // create new user
-    // input username/password
+    User* newUser = (User*)malloc(sizeof(User));
+
+    // generate userID
+    int newID = 1;
+
+    current = userHead;
+
+    while (current != NULL) {
+
+        if (current->userID >= newID) {
+            newID = current->userID + 1;
+        }
+
+        current = current->next;
+    }
+
+    newUser->userID = newID;
+
+    strcpy(newUser->username, name);
+    strcpy(newUser->password, pass);
+
+    newUser->borrowedCount = 0;
+
+    newUser->next = NULL;
+
     // add to linked list
-    char name[50],pass[50];
-    char filename[50],filepass[50];
-    FILE *fp;
-    int found = 0;
+    if (userHead == NULL) {
+        userHead = newUser;
+    }
+    else {
 
-    printf("Create a username[50 characters limit] : ");
-    scanf("%s",name);
+        current = userHead;
 
-    fp = fopen("User.txt", "r");
-        if (fp == NULL) {
-            printf("Cannot open file.\n");
-            return 1;
-        }
-        found = 0;
-
-        while (fscanf(fp, "%s %s", filename, filepass) == 2) {
-
-            if (strcmp(name,filename)==0) {
-                found = 1;
-                break;
-            }
+        while (current->next != NULL) {
+            current = current->next;
         }
 
-    fclose(fp);
-
-    while(found == 1||strlen(name)>50){
-        if(found==1){
-            printf("***This username was used***\n");
-        }
-        if(strlen(name)>50){
-            printf("***This username is too long***");
-        }
-        printf("Create a username[50 characters limit] : ");
-        scanf("%s",name);
-
-        fp = fopen("User.txt", "r");
-            if (fp == NULL) {
-                printf("Cannot open file.\n");
-                return 1;
-            }
-            found = 0;
-
-            while (fscanf(fp, "%s %s", filename, filepass) == 2) {
-
-                if (strcmp(name,filename)==0) {
-                    found = 1;
-                    break;
-                }
-            }
-
-        fclose(fp);
+        current->next = newUser;
     }
 
-    printf("Create a password[50 characters limit] ; ");
-    scanf("%s",pass);
+    // save to file
+    saveUser(newUser);
 
-    while(strlen(pass)>50){
-        printf("***The password is too long***\nCreate the password[50 characters limit] ; ");
-        scanf("%s",pass);
-    }
-
-    strcpy(currentUser->username,name);
-    strcpy(currentUser->password,pass);
-
-    fp = fopen("User.txt", "a");
-        if (fp == NULL) {
-            printf("Cannot open file.\n");
-            return 1;
-        }
-        
-        fprintf(fp,"%s %s\n",name,pass);
-
-        fclose(fp);
+    printf("Register success.\n");
 }
 
+// ===== LOGIN =====
 void loginUser() {
-    // TODO:
-    // ask username/password
-    // search user list
-    // if match → set currentUser
-    char name[20],pass[20];
-    char filename[20],filepass[20];
-    FILE *fp;
-    int found = 0;
 
-    printf("Enter user name : ");
-    scanf("%s",name);
+    char name[50];
+    char pass[50];
 
-    fp = fopen("User.txt", "r");
-        if (fp == NULL) {
-            printf("Cannot open file.\n");
-            return 1;
-        }
-        found = 0;
+    printf("Username: ");
+    scanf("%49s", name);
 
-        while (fscanf(fp, "%s %s", filename, filepass) == 2) {
+    printf("Password: ");
+    scanf("%49s", pass);
 
-            if (strcmp(name,filename)==0) {
-                found = 1;
-                break;
-            }
+    User* current = userHead;
+
+    while (current != NULL) {
+
+        if (strcmp(current->username, name) == 0 &&
+            strcmp(current->password, pass) == 0)
+        {
+
+            currentUser = current;
+
+            printf("Login success.\n");
+            return;
         }
 
-    fclose(fp);
-
-    while(found == 0){
-        printf("***User do not found***\nEnter user name : ");
-        scanf("%s",name);
-
-        fp = fopen("User.txt", "r");
-            if (fp == NULL) {
-                printf("Cannot open file.\n");
-                return 1;
-            }
-            found = 0;
-
-            while (fscanf(fp, "%s %s", filename, filepass) == 2) {
-
-                if (strcmp(name,filename)==0) {
-                    found = 1;
-                    break;
-                }
-            }
-
-        fclose(fp);
+        current = current->next;
     }
 
-    printf("Enter user password : ");
-    scanf("%s",pass);
-
-    while(strcmp(pass,filepass)!=0){
-        printf("***Wrong password***\nEnter the password : ");
-        scanf("%s",pass);
-    }
-
-    strcpy(currentUser->username,filename);
-    strcpy(currentUser->password,filepass);
+    printf("Wrong username or password.\n");
 }
 
+// ===== LOGOUT =====
 void logoutUser() {
+
     currentUser = NULL;
+
     printf("Logged out.\n");
 }
 
+// ===== CHECK LOGIN =====
 int isLoggedIn() {
+
     return currentUser != NULL;
+}
+
+// ===== DISPLAY USERS =====
+void displayUsers() {
+
+    User* current = userHead;
+
+    while (current != NULL) {
+
+        printf("ID: %d\n", current->userID);
+        printf("Username: %s\n", current->username);
+        printf("Borrowed: %d\n", current->borrowedCount);
+
+        printf("-------------------\n");
+
+        current = current->next;
+    }
 }
