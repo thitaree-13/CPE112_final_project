@@ -8,7 +8,7 @@
 
 // ===== GLOBAL VARIABLE =====
 
-Book* head = NULL;
+Book *head = NULL;
 
 // ===== ADD BOOK =====
 
