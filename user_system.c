@@ -201,3 +201,30 @@ void displayUsers() {
         current = current->next;
     }
 }
+
+void saveAllUsers()
+{
+    FILE *fp = fopen("User.txt", "w");
+
+    if (fp == NULL)
+    {
+        printf("Cannot open file.\n");
+        return;
+    }
+
+    User* current = userHead;
+
+    while (current != NULL)
+    {
+        fprintf(fp,
+                "%d %s %s %d\n",
+                current->userID,
+                current->username,
+                current->password,
+                current->borrowedCount);
+
+        current = current->next;
+    }
+
+    fclose(fp);
+}

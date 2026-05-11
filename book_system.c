@@ -4,6 +4,7 @@
 
 #include "book_system.h"
 #include "search.h"
+#include "borrow_system.h"
 
 // ===== GLOBAL VARIABLE =====
 
@@ -41,7 +42,13 @@ void addBook()
     fgets(newBook->category, 50, stdin);
     newBook->category[strcspn(newBook->category, "\n")] = 0;
 
+    // available
     newBook->available = 1;
+
+    // borrow system
+    newBook->borrowedBy = -1;
+
+    initWaitQueue(&newBook->waitlist);
 
     // initialize pointers
     newBook->next = NULL;
@@ -127,8 +134,18 @@ void displayBooks()
         printf("Title: %s\n", temp->title);
         printf("Author: %s\n", temp->author);
         printf("Category: %s\n", temp->category);
+
         printf("Status: %s\n",
                temp->available ? "Available" : "Borrowed");
+
+        if (!temp->available)
+        {
+            printf("Borrowed By User ID: %d\n",
+                   temp->borrowedBy);
+        }
+
+        printf("Waitlist Count: %d\n",
+               temp->waitlist.count);
 
         temp = temp->next;
     }
@@ -151,12 +168,13 @@ void saveBooksToFile()
     while (temp != NULL)
     {
         fprintf(fp,
-                "%d|%s|%s|%s|%d\n",
+                "%d|%s|%s|%s|%d|%d\n",
                 temp->id,
                 temp->title,
                 temp->author,
                 temp->category,
-                temp->available);
+                temp->available,
+                temp->borrowedBy);
 
         temp = temp->next;
     }
@@ -185,18 +203,22 @@ void loadBooksFromFile()
         }
 
         int result = fscanf(fp,
-                            "%d|%99[^|]|%99[^|]|%49[^|]|%d\n",
+                            "%d|%99[^|]|%99[^|]|%49[^|]|%d|%d\n",
                             &newBook->id,
                             newBook->title,
                             newBook->author,
                             newBook->category,
-                            &newBook->available);
+                            &newBook->available,
+                            &newBook->borrowedBy);
 
-        if (result != 5)
+        if (result != 6)
         {
             free(newBook);
             break;
         }
+
+        // initialize queue
+        initWaitQueue(&newBook->waitlist);
 
         // initialize pointers
         newBook->next = NULL;

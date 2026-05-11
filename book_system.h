@@ -1,6 +1,22 @@
 #ifndef BOOK_SYSTEM_H
 #define BOOK_SYSTEM_H
 
+// ===== WAITLIST =====
+
+#define MAX_WAITLIST 50
+
+typedef struct
+{
+    int user_ids[MAX_WAITLIST];
+
+    int front;
+    int rear;
+    int count;
+
+} WaitQueue;
+
+// ===== BOOK STRUCT =====
+
 typedef struct Book
 {
     int id;
@@ -11,24 +27,33 @@ typedef struct Book
 
     int available;
 
-    // linked list pointer
+    // borrow system
+    int borrowedBy;
+
+    WaitQueue waitlist;
+
+    // linked list
     struct Book* next;
 
-    // hash table pointer
+    // hash table
     struct Book* hashNext;
 
 } Book;
 
-// global head
+// ===== GLOBAL =====
+
 extern Book* head;
 
-// functions
+// ===== FUNCTIONS =====
+
 void addBook();
+
 void deleteBook();
+
 void displayBooks();
 
-// file handling
 void saveBooksToFile();
+
 void loadBooksFromFile();
 
 #endif

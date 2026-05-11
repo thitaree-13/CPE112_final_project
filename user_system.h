@@ -20,7 +20,7 @@ void loginUser();
 void logoutUser();
 int isLoggedIn();
 void loadUsers();
-void saveUser(User* user);
+void saveAllUsers();
 void displayUsers();
 
 #endif
