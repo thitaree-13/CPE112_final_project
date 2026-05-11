@@ -26,6 +26,11 @@ void loadUsers() {
     {
 
         User* newUser = (User*)malloc(sizeof(User));
+        if (newUser == NULL)
+{
+    printf("Memory allocation failed.\n");
+    return;
+}
 
         *newUser = temp;
         newUser->next = NULL;
@@ -94,6 +99,11 @@ void registerUser() {
 
     // create new user
     User* newUser = (User*)malloc(sizeof(User));
+    if (newUser == NULL)
+{
+    printf("Memory allocation failed.\n");
+    return;
+}
 
     // generate userID
     int newID = 1;
@@ -141,6 +151,11 @@ void registerUser() {
 
 // ===== LOGIN =====
 void loginUser() {
+    if (currentUser != NULL)
+{
+    printf("Another user already logged in.\n");
+    return;
+}
 
     char name[50];
     char pass[50];
@@ -161,7 +176,7 @@ void loginUser() {
 
             currentUser = current;
 
-            printf("Login success.\n");
+            printf("Login success. Welcome %s\n", currentUser->username);
             return;
         }
 
@@ -190,6 +205,16 @@ void displayUsers() {
 
     User* current = userHead;
 
+    if (current == NULL)
+
+    {
+
+        printf("No users found.\n");
+
+        return;
+
+    }
+    
     while (current != NULL) {
 
         printf("ID: %d\n", current->userID);

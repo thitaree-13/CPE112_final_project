@@ -12,78 +12,113 @@ void menu()
 
     do
     {
-        printf("\n===== LIBRARY SYSTEM =====\n");
-        printf("1. Register\n");
-        printf("2. Login\n");
-        printf("3. Add Book\n");
-        printf("4. Delete Book\n");
-        printf("5. Display Books\n");
-        printf("6. Search Book\n");
-        printf("7. Borrow Book\n");
-        printf("8. Return Book\n");
-        printf("9. Logout\n");
-        printf("10. Exit\n");
-        printf("Enter choice: ");
-
-        if (scanf("%d", &choice) != 1)
+        // ===== NOT LOGIN YET =====
+        while (!isLoggedIn())
         {
-            printf("Invalid input\n");
+            printf("\n===== LIBRARY SYSTEM =====\n");
+            printf("1. Register\n");
+            printf("2. Login\n");
+            printf("3. Exit\n");
+            printf("Enter choice: ");
+
+            if (scanf("%d", &choice) != 1)
+            {
+                printf("Invalid input\n");
+
+                while (getchar() != '\n');
+
+                continue;
+            }
 
             while (getchar() != '\n');
 
-            continue;
+            switch (choice)
+            {
+            case 1:
+                registerUser();
+                break;
+
+            case 2:
+                loginUser();
+                break;
+
+            case 3:
+                printf("Exit\n");
+                return;
+
+            default:
+                printf("Invalid choice\n");
+            }
         }
 
-        while (getchar() != '\n');
-
-        switch (choice)
+        // ===== AFTER LOGIN =====
+        do
         {
-        case 1:
-            printf("Register called\n");
-            registerUser();
-            break;
+            printf("\n===== LIBRARY MENU =====\n");
 
-        case 2:
-            printf("Login called\n");
-            loginUser();
-            break;
+            printf("1. Add Book\n");
+            printf("2. Delete Book\n");
+            printf("3. Display Books\n");
+            printf("4. Search Book\n");
+            printf("5. Borrow Book\n");
+            printf("6. Return Book\n");
+            printf("7. Logout\n");
+            printf("8. Exit\n");
 
-        case 3:
-            printf("AddBook called\n");
-            addBook();
-            break;
+            printf("Enter choice: ");
 
-        case 4:
-            deleteBook();
-            break;
+            if (scanf("%d", &choice) != 1)
+            {
+                printf("Invalid input\n");
 
-        case 5:
-            displayBooks();
-            break;
+                while (getchar() != '\n');
 
-        case 6:
-            searchMenu();
-            break;
+                continue;
+            }
 
-        case 7:
-            borrowBook();
-            break;
+            while (getchar() != '\n');
 
-        case 8:
-            returnBook();
-            break;
+            switch (choice)
+            {
+            case 1:
+                addBook();
+                break;
 
-        case 9:
-            logoutUser();
-            break;
+            case 2:
+                deleteBook();
+                break;
 
-        case 10:
-            printf("Exit\n");
-            break;
+            case 3:
+                displayBooks();
+                break;
 
-        default:
-            printf("Invalid choice\n");
-        }
+            case 4:
+                searchMenu();
+                break;
 
-    } while (choice != 10);
+            case 5:
+                borrowBook();
+                break;
+
+            case 6:
+                returnBook();
+                break;
+
+            case 7:
+                logoutUser();
+                printf("Back to login menu.\n");
+                break;
+
+            case 8:
+                logoutUser();
+                printf("Exit\n");
+                return;
+
+            default:
+                printf("Invalid choice\n");
+            }
+
+        } while (isLoggedIn());
+
+    } while (1);
 }
