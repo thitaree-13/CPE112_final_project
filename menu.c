@@ -12,25 +12,30 @@ void menu()
 
     do
     {
-        // ===== NOT LOGIN YET =====
+        // ===== LOGIN / REGISTER MENU =====
+
         while (!isLoggedIn())
         {
             printf("\n===== LIBRARY SYSTEM =====\n");
+
             printf("1. Register\n");
             printf("2. Login\n");
             printf("3. Exit\n");
+
             printf("Enter choice: ");
 
             if (scanf("%d", &choice) != 1)
             {
                 printf("Invalid input\n");
 
-                while (getchar() != '\n');
+                while (getchar() != '\n')
+                    ;
 
                 continue;
             }
 
-            while (getchar() != '\n');
+            while (getchar() != '\n')
+                ;
 
             switch (choice)
             {
@@ -43,7 +48,7 @@ void menu()
                 break;
 
             case 3:
-                printf("Exit\n");
+                printf("Exit program.\n");
                 return;
 
             default:
@@ -51,19 +56,24 @@ void menu()
             }
         }
 
-        // ===== AFTER LOGIN =====
+        // ===== MAIN MENU AFTER LOGIN =====
+
         do
         {
             printf("\n===== LIBRARY MENU =====\n");
 
-            printf("1. Add Book\n");
+            printf("Logged in as: %s\n",
+                   currentUser->username);
+
+            printf("\n1. Add Book\n");
             printf("2. Delete Book\n");
             printf("3. Display Books\n");
             printf("4. Search Book\n");
             printf("5. Borrow Book\n");
             printf("6. Return Book\n");
-            printf("7. Logout\n");
-            printf("8. Exit\n");
+            printf("7. My Book List\n");
+            printf("8. Logout\n");
+            printf("9. Exit\n");
 
             printf("Enter choice: ");
 
@@ -71,12 +81,14 @@ void menu()
             {
                 printf("Invalid input\n");
 
-                while (getchar() != '\n');
+                while (getchar() != '\n')
+                    ;
 
                 continue;
             }
 
-            while (getchar() != '\n');
+            while (getchar() != '\n')
+                ;
 
             switch (choice)
             {
@@ -105,13 +117,21 @@ void menu()
                 break;
 
             case 7:
-                logoutUser();
-                printf("Back to login menu.\n");
+                showMyBooks();
                 break;
 
             case 8:
                 logoutUser();
-                printf("Exit\n");
+
+                printf("Back to login menu.\n");
+
+                break;
+
+            case 9:
+                logoutUser();
+
+                printf("Exit program.\n");
+
                 return;
 
             default:

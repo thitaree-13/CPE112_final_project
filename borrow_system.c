@@ -66,7 +66,7 @@ void borrowBook()
     printf("Enter Book ID: ");
     scanf("%d", &id);
 
-    Book* temp = head;
+    Book *temp = head;
 
     while (temp != NULL)
     {
@@ -141,7 +141,7 @@ void returnBook()
     printf("Enter Book ID: ");
     scanf("%d", &id);
 
-    Book* temp = head;
+    Book *temp = head;
 
     while (temp != NULL)
     {
@@ -190,4 +190,51 @@ void returnBook()
     }
 
     printf("Book not found.\n");
+}
+
+void showMyBooks()
+{
+    if (!isLoggedIn())
+    {
+        printf("Please login first.\n");
+        return;
+    }
+
+    Book *temp = head;
+
+    printf("\n===== MY BORROWED BOOKS =====\n");
+
+    while (temp != NULL)
+    {
+        if (temp->borrowedBy == currentUser->userID)
+        {
+            printf("ID: %d\n", temp->id);
+            printf("Title: %s\n", temp->title);
+            printf("-------------------\n");
+        }
+
+        temp = temp->next;
+    }
+
+    printf("\n===== MY WAITLIST =====\n");
+
+    temp = head;
+
+    while (temp != NULL)
+    {
+        for (int i = 0; i < temp->waitlist.count; i++)
+        {
+            int index =
+                (temp->waitlist.front + i) % MAX_WAITLIST;
+
+            if (temp->waitlist.user_ids[index] == currentUser->userID)
+            {
+                printf("ID: %d\n", temp->id);
+                printf("Title: %s\n", temp->title);
+                printf("-------------------\n");
+            }
+        }
+
+        temp = temp->next;
+    }
 }

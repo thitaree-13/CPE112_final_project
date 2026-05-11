@@ -35,4 +35,6 @@ void borrowBook();
 
 void returnBook();
 
+void showMyBooks();
+
 #endif

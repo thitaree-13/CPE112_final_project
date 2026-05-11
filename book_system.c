@@ -14,7 +14,7 @@ Book* head = NULL;
 
 void addBook()
 {
-    Book* newBook = (Book*)malloc(sizeof(Book));
+    Book *newBook = (Book *)malloc(sizeof(Book));
 
     if (newBook == NULL)
     {
@@ -77,8 +77,8 @@ void deleteBook()
 
     scanf("%d", &id);
 
-    Book* temp = head;
-    Book* prev = NULL;
+    Book *temp = head;
+    Book *prev = NULL;
 
     while (temp != NULL && temp->id != id)
     {
@@ -118,36 +118,68 @@ void deleteBook()
 
 void displayBooks()
 {
-    Book* temp = head;
+    // count books
+    int count = 0;
+    Book *temp = head;
 
-    if (temp == NULL)
+    if (head == NULL)
     {
         printf("No books available.\n");
         return;
     }
 
-    printf("\n===== Book List =====\n");
-
     while (temp != NULL)
     {
-        printf("\nID: %d\n", temp->id);
-        printf("Title: %s\n", temp->title);
-        printf("Author: %s\n", temp->author);
-        printf("Category: %s\n", temp->category);
+        count++;
+        temp = temp->next;
+    }
+
+    // create array
+    Book *arr[count];
+
+    temp = head;
+
+    for (int i = 0; i < count; i++)
+    {
+        arr[i] = temp;
+        temp = temp->next;
+    }
+
+    // sort by ID (bubble sort)
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = 0; j < count - i - 1; j++)
+        {
+            if (arr[j]->id > arr[j + 1]->id)
+            {
+                Book *swap = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = swap;
+            }
+        }
+    }
+
+    printf("\n===== Book List =====\n");
+
+    // display sorted books
+    for (int i = 0; i < count; i++)
+    {
+        printf("\nID: %d\n", arr[i]->id);
+        printf("Title: %s\n", arr[i]->title);
+        printf("Author: %s\n", arr[i]->author);
+        printf("Category: %s\n", arr[i]->category);
 
         printf("Status: %s\n",
-               temp->available ? "Available" : "Borrowed");
+               arr[i]->available ? "Available" : "Borrowed");
 
-        if (!temp->available)
+        if (!arr[i]->available)
         {
             printf("Borrowed By User ID: %d\n",
-                   temp->borrowedBy);
+                   arr[i]->borrowedBy);
         }
 
         printf("Waitlist Count: %d\n",
-               temp->waitlist.count);
-
-        temp = temp->next;
+               arr[i]->waitlist.count);
     }
 }
 
@@ -155,7 +187,7 @@ void displayBooks()
 
 void saveBooksToFile()
 {
-    FILE* fp = fopen("books.txt", "w");
+    FILE *fp = fopen("books.txt", "w");
 
     if (fp == NULL)
     {
@@ -163,7 +195,7 @@ void saveBooksToFile()
         return;
     }
 
-    Book* temp = head;
+    Book *temp = head;
 
     while (temp != NULL)
     {
@@ -186,7 +218,7 @@ void saveBooksToFile()
 
 void loadBooksFromFile()
 {
-    FILE* fp = fopen("books.txt", "r");
+    FILE *fp = fopen("books.txt", "r");
 
     if (fp == NULL)
     {
@@ -195,7 +227,7 @@ void loadBooksFromFile()
 
     while (1)
     {
-        Book* newBook = (Book*)malloc(sizeof(Book));
+        Book *newBook = (Book *)malloc(sizeof(Book));
 
         if (newBook == NULL)
         {
