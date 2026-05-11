@@ -4,15 +4,17 @@
 #include "user_system.h"
 
 // ===== GLOBAL =====
-User* userHead = NULL;
-User* currentUser = NULL;
+User *userHead = NULL;
+User *currentUser = NULL;
 
 // ===== LOAD USERS FROM FILE =====
-void loadUsers() {
+void loadUsers()
+{
 
     FILE *fp = fopen("User.txt", "r");
 
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         return;
     }
 
@@ -25,24 +27,27 @@ void loadUsers() {
                   &temp.borrowedCount) == 4)
     {
 
-        User* newUser = (User*)malloc(sizeof(User));
+        User *newUser = (User *)malloc(sizeof(User));
         if (newUser == NULL)
-{
-    printf("Memory allocation failed.\n");
-    return;
-}
+        {
+            printf("Memory allocation failed.\n");
+            return;
+        }
 
         *newUser = temp;
         newUser->next = NULL;
 
         // add to linked list
-        if (userHead == NULL) {
+        if (userHead == NULL)
+        {
             userHead = newUser;
         }
-        else {
-            User* current = userHead;
+        else
+        {
+            User *current = userHead;
 
-            while (current->next != NULL) {
+            while (current->next != NULL)
+            {
                 current = current->next;
             }
 
@@ -54,11 +59,13 @@ void loadUsers() {
 }
 
 // ===== SAVE USER =====
-void saveUser(User* user) {
+void saveUser(User *user)
+{
 
     FILE *fp = fopen("User.txt", "a");
 
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         printf("Cannot open file.\n");
         return;
     }
@@ -73,7 +80,8 @@ void saveUser(User* user) {
 }
 
 // ===== REGISTER =====
-void registerUser() {
+void registerUser()
+{
 
     char name[50];
     char pass[50];
@@ -82,11 +90,13 @@ void registerUser() {
     scanf("%49s", name);
 
     // check duplicate
-    User* current = userHead;
+    User *current = userHead;
 
-    while (current != NULL) {
+    while (current != NULL)
+    {
 
-        if (strcmp(current->username, name) == 0) {
+        if (strcmp(current->username, name) == 0)
+        {
             printf("Username already used.\n");
             return;
         }
@@ -98,21 +108,23 @@ void registerUser() {
     scanf("%49s", pass);
 
     // create new user
-    User* newUser = (User*)malloc(sizeof(User));
+    User *newUser = (User *)malloc(sizeof(User));
     if (newUser == NULL)
-{
-    printf("Memory allocation failed.\n");
-    return;
-}
+    {
+        printf("Memory allocation failed.\n");
+        return;
+    }
 
     // generate userID
     int newID = 1;
 
     current = userHead;
 
-    while (current != NULL) {
+    while (current != NULL)
+    {
 
-        if (current->userID >= newID) {
+        if (current->userID >= newID)
+        {
             newID = current->userID + 1;
         }
 
@@ -129,14 +141,16 @@ void registerUser() {
     newUser->next = NULL;
 
     // add to linked list
-    if (userHead == NULL) {
+    if (userHead == NULL)
+    {
         userHead = newUser;
     }
-    else {
-
+    else
+    {
         current = userHead;
 
-        while (current->next != NULL) {
+        while (current->next != NULL)
+        {
             current = current->next;
         }
 
@@ -146,16 +160,21 @@ void registerUser() {
     // save to file
     saveUser(newUser);
 
+    // auto login
+    currentUser = newUser;
+
     printf("Register success.\n");
+    printf("Welcome %s\n", currentUser->username);
 }
 
 // ===== LOGIN =====
-void loginUser() {
-    if (currentUser != NULL)
+void loginUser()
 {
-    printf("Another user already logged in.\n");
-    return;
-}
+    if (currentUser != NULL)
+    {
+        printf("Another user already logged in.\n");
+        return;
+    }
 
     char name[50];
     char pass[50];
@@ -166,9 +185,10 @@ void loginUser() {
     printf("Password: ");
     scanf("%49s", pass);
 
-    User* current = userHead;
+    User *current = userHead;
 
-    while (current != NULL) {
+    while (current != NULL)
+    {
 
         if (strcmp(current->username, name) == 0 &&
             strcmp(current->password, pass) == 0)
@@ -187,7 +207,8 @@ void loginUser() {
 }
 
 // ===== LOGOUT =====
-void logoutUser() {
+void logoutUser()
+{
 
     currentUser = NULL;
 
@@ -195,15 +216,17 @@ void logoutUser() {
 }
 
 // ===== CHECK LOGIN =====
-int isLoggedIn() {
+int isLoggedIn()
+{
 
     return currentUser != NULL;
 }
 
 // ===== DISPLAY USERS =====
-void displayUsers() {
+void displayUsers()
+{
 
-    User* current = userHead;
+    User *current = userHead;
 
     if (current == NULL)
 
@@ -212,10 +235,10 @@ void displayUsers() {
         printf("No users found.\n");
 
         return;
-
     }
-    
-    while (current != NULL) {
+
+    while (current != NULL)
+    {
 
         printf("ID: %d\n", current->userID);
         printf("Username: %s\n", current->username);
@@ -237,7 +260,7 @@ void saveAllUsers()
         return;
     }
 
-    User* current = userHead;
+    User *current = userHead;
 
     while (current != NULL)
     {
