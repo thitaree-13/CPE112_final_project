@@ -65,13 +65,39 @@ Used for the waiting list system.
 ---
 
 ## 3. Hash Table
-
-Used for faster searching of books by ID.
-By using chaining for suppose collision
+Used for faster searching of books by ID using chaining for collision handling.
 
 ### Why Hash Table?
-- Faster lookup compared to linear search
-- Improves search efficiency
+- O(1) average time for search by ID
+- Much faster than scanning every book one by one
+- Collision handled safely using chaining (linked list per bucket)
+- Does not require data to be sorted
+
+### How Hash Function Works
+index = Book ID % TABLE_SIZE
+- Book ID 5   → 5 % 100   = slot 5
+- Book ID 105 → 105 % 100 = slot 5 → collision → chaining
+- Book ID 23  → 23 % 100  = slot 23
+
+### Time Complexity
+| Operation | Average Case | Worst Case |
+|-----------|-------------|------------|
+| Search by ID | O(1) | O(n) |
+| Insert | O(1) | O(1) |
+| Delete | O(1) | O(n) |
+
+### Comparison with Other Search Methods
+| | Hash Table | Linear Search | Binary Search |
+|---|---|---|---|
+| Search | O(1) avg | O(n) | O(log n) |
+| Requires sorted data | No | No | Yes |
+| Insert | O(1) | O(1) | O(n) must re-sort |
+| Best for | ID lookup | small datasets | sorted arrays |
+
+### Used In
+- Search book by ID
+- Insert book into table
+- Delete book from table
 
 ---
  Sorting Algorithm
@@ -103,6 +129,10 @@ Quick Sort was selected because:
 
 Quick Sort uses less memory than Merge Sort and is faster in practice
 than Bubble Sort and Insertion Sort for large datasets.
+
+### Used in
+- search by sort ID
+- search by sort Title
 
 ---
 
