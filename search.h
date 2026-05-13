@@ -1,10 +1,3 @@
-// #ifndef SEARCH_H
-// #define SEARCH_H
-
-// void searchBook();
-
-// #endif
-
 #ifndef HASH_SEARCH_H
 #define HASH_SEARCH_H
 
