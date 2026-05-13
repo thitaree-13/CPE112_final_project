@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include "menu.h"
 #include "book_system.h"
 #include "search.h"
@@ -28,36 +29,44 @@ void menu()
 
         switch (choice)
         {
-        case 1:
-            registerUser();
-            break;
-        case 2:
-            loginUser();
-            break;
-        case 3:
-            addBook();
-            break;
-        case 4:
-            deleteBook();
-            break;
-        case 5:
-            displayBooks();
-            break;
-        case 6:
-            searchBook();
-            break;
-        case 7:
-            borrowBook();
-            break;
-        case 8:
-            returnBook();
-            break;
-        case 9:
-            logoutUser();
-            break;
-        case 10:
-            printf("Exit\n");
-            break;
+            printf("\n===== LIBRARY SYSTEM =====\n");
+
+            printf("1. Register\n");
+            printf("2. Login\n");
+            printf("3. Exit\n");
+
+            printf("Enter choice: ");
+
+            if (scanf("%d", &choice) != 1)
+            {
+                printf("Invalid input\n");
+
+                while (getchar() != '\n')
+                    ;
+
+                continue;
+            }
+
+            while (getchar() != '\n')
+                ;
+
+            switch (choice)
+            {
+            case 1:
+                registerUser();
+                break;
+
+            case 2:
+                loginUser();
+                break;
+
+            case 3:
+                printf("Exit program.\n");
+                return;
+
+            default:
+                printf("Invalid choice\n");
+            }
         }
 
     } while (choice != 10);

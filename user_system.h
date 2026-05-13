@@ -19,5 +19,8 @@ void registerUser();
 void loginUser();
 void logoutUser();
 int isLoggedIn();
+void loadUsers();
+void saveAllUsers();
+void displayUsers();
 
 #endif
