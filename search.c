@@ -1,19 +1,4 @@
-// #include <stdio.h>
-// #include <string.h>
-// #include "search.h"
-// #include "book_system.h"
-
-// // ===== FUNCTIONS =====
-
-// void searchBook() {
-//     // TODO: ask user for search input (ID or title)
-
-//     // TODO: traverse linked list (or later hash table)
-
-//     // TODO: compare and display result
-
-//     // TODO: handle not found case
-// }
+// search.c file //
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,61 +23,32 @@ int hashFunction(int id) {
     return id % TABLE_SIZE;
 }
 
-// insert a book into the hash table
-// we use chaining so if two books have same index, we link them
-// void insertHash(Book* book) {
-//     int index = hashFunction(book->id);
-
-//     // make a new node
-//     Book* newNode = (Book*)malloc(sizeof(Book));
-//     if (newNode == NULL) {
-//         printf("Memory allocation failed!\n");
-//         return;
-//     }
-
-//     // copy book data into new node
-//     *newNode = *book;
-
-//     // put new node at front of chain
-//     newNode->hashNext = hashTable[index];
-//     hashTable[index] = newNode;
-// }
-
-
-void insertHash(Book* book)
-{
+// insert a book into the hash table // chaining, bucket
+void insertHash(Book* book) {
     int index = hashFunction(book->id);
 
+    // put book at front of chain (no malloc needed, book already exists)
     book->hashNext = hashTable[index];
-
     hashTable[index] = book;
 }
 
 // delete a book from hash table by ID
-void deleteHash(int id)
-{
+void deleteHash(int id) {
     int index = hashFunction(id);
 
     Book* curr = hashTable[index];
     Book* prev = NULL;
 
-    while (curr != NULL)
-    {
-        if (curr->id == id)
-        {
-            if (prev == NULL)
-            {
+    while (curr != NULL) {
+        if (curr->id == id) {
+            if (prev == NULL) {
                 hashTable[index] = curr->hashNext;
-            }
-            else
-            {
+            } else {
                 prev->hashNext = curr->hashNext;
             }
-
             printf("Book ID %d removed from hash table.\n", id);
             return;
         }
-
         prev = curr;
         curr = curr->hashNext;
     }
@@ -119,26 +75,22 @@ Book* searchByID(int id) {
 // helper functions (only used inside this file)
 // ------------------------------------------------
 
-// check if 'needle' is inside 'haystack' without caring about uppercase/lowercase
+// lower and upper case
 static int containsIgnoreCase(const char* haystack, const char* needle) {
     if (needle[0] == '\0') return 1;
 
-    size_t hLen = strlen(haystack);
-    size_t nLen = strlen(needle);
-    size_t i, j;
+    char lowerHay[256], lowerNeedle[256];
+    int i;
 
-    for (i = 0; i + nLen <= hLen; i++) {
-        int match = 1;
-        for (j = 0; j < nLen; j++) {
-            if (tolower((unsigned char)haystack[i + j]) !=
-                tolower((unsigned char)needle[j])) {
-                match = 0;
-                break;
-            }
-        }
-        if (match) return 1;
-    }
-    return 0;
+    for (i = 0; haystack[i]; i++)
+        lowerHay[i] = tolower((unsigned char)haystack[i]);
+    lowerHay[i] = '\0';
+
+    for (i = 0; needle[i]; i++)
+        lowerNeedle[i] = tolower((unsigned char)needle[i]);
+    lowerNeedle[i] = '\0';
+
+    return strstr(lowerHay, lowerNeedle) != NULL;
 }
 
 // print one book details
@@ -227,31 +179,25 @@ void searchByAvailability(Book* head, int available) {
 }
 
 // ------------------------------------------------
-// sorting using quicksort (qsort from stdlib)
+// quicksort (pivot, low, high) --- Sorted Book
 // ------------------------------------------------
 
-// we need to convert linked list to array first
-// because qsort works on arrays not linked lists
+// convert linked list to array
 static Book** buildArray(Book* head, int* n) {
     *n = 0;
-
-    // count how many books we have
     Book* temp = head;
     while (temp != NULL) {
         (*n)++;
         temp = temp->next;
     }
-
     if (*n == 0) return NULL;
 
-    // make array of pointers
     Book** arr = (Book**)malloc((*n) * sizeof(Book*));
     if (arr == NULL) {
         printf("Memory allocation failed!\n");
         return NULL;
     }
 
-    // fill array with book pointers
     temp = head;
     int i = 0;
     while (temp != NULL) {
@@ -263,17 +209,75 @@ static Book** buildArray(Book* head, int* n) {
     return arr;
 }
 
-// comparator for sorting by title (A to Z)
-static int cmpTitle(const void* a, const void* b) {
-    return strcasecmp((*(Book**)a)->title, (*(Book**)b)->title);
+// swap two book pointers in array
+static void swapBooks(Book** a, Book** b) {
+    Book* temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-// comparator for sorting by ID (smallest to biggest)
-static int cmpID(const void* a, const void* b) {
-    return (*(Book**)a)->id - (*(Book**)b)->id;
+// Sort by Title
+static int partitionByTitle(Book** arr, int low, int high) {
+    Book* pivot = arr[high];
+    int i = low - 1; 
+
+    int j;
+    for (j = low; j < high; j++) {
+
+        if (strcasecmp(arr[j]->title, pivot->title) < 0) {
+            i++;
+            swapBooks(&arr[i], &arr[j]);
+        }
+    }
+
+
+    swapBooks(&arr[i + 1], &arr[high]);
+    return i + 1; 
 }
 
-// sort all books by title using quicksort
+// quicksort by title (recursive)
+static void quickSortByTitle(Book** arr, int low, int high) {
+    if (low < high) {
+      
+        int pivot = partitionByTitle(arr, low, high);
+
+        quickSortByTitle(arr, low, pivot - 1);
+
+        quickSortByTitle(arr, pivot + 1, high);
+    }
+}
+
+// Sort by ID 
+static int partitionByID(Book** arr, int low, int high) {
+    Book* pivot = arr[high];
+    int i = low - 1;
+
+    int j;
+    for (j = low; j < high; j++) {
+
+        if (arr[j]->id < pivot->id) {
+            i++;
+            swapBooks(&arr[i], &arr[j]);
+        }
+    }
+
+    swapBooks(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+// quicksort by ID (recursive)
+static void quickSortByID(Book** arr, int low, int high) {
+    if (low < high) {
+        int pivot = partitionByID(arr, low, high);
+
+        quickSortByID(arr, low, pivot - 1);
+
+        quickSortByID(arr, pivot + 1, high);
+    }
+}
+
+// sort functions
+
 void sortBooksByTitle(Book* head) {
     int n;
     Book** arr = buildArray(head, &n);
@@ -283,8 +287,7 @@ void sortBooksByTitle(Book* head) {
         return;
     }
 
-    // qsort uses quicksort internally - O(n log n)
-    qsort(arr, n, sizeof(Book*), cmpTitle);
+    quickSortByTitle(arr, 0, n - 1);
 
     printf("\n===== Books Sorted by Title =====\n");
     int i;
@@ -293,10 +296,9 @@ void sortBooksByTitle(Book* head) {
     }
     printf("Total: %d book(s).\n", n);
 
-    free(arr); // don't forget to free!
+    free(arr);
 }
 
-// sort all books by ID using quicksort
 void sortBooksByID(Book* head) {
     int n;
     Book** arr = buildArray(head, &n);
@@ -306,8 +308,7 @@ void sortBooksByID(Book* head) {
         return;
     }
 
-    // qsort uses quicksort internally - O(n log n)
-    qsort(arr, n, sizeof(Book*), cmpID);
+    quickSortByID(arr, 0, n - 1);
 
     printf("\n===== Books Sorted by ID =====\n");
     int i;
@@ -316,11 +317,14 @@ void sortBooksByID(Book* head) {
     }
     printf("Total: %d book(s).\n", n);
 
-    free(arr); // don't forget to free!
+    free(arr);
 }
 
-void searchMenu()
-{
+// ------------------------------------------------
+// search menu
+// ------------------------------------------------
+
+void searchMenu() {
     int choice;
     int id;
     char keyword[100];
@@ -334,37 +338,27 @@ void searchMenu()
     printf("6. Show Borrowed Books\n");
     printf("7. Sort by Title\n");
     printf("8. Sort by ID\n");
-
     printf("Enter choice: ");
     scanf("%d", &choice);
     getchar();
 
-    switch (choice)
-    {
-    case 1:
-    {
+    switch (choice) {
+    case 1: {
         printf("Enter Book ID: ");
         scanf("%d", &id);
 
         Book* found = searchByID(id);
-
-        if (found != NULL)
-        {
+        if (found != NULL) {
             printBook(found);
-        }
-        else
-        {
+        } else {
             printf("Book not found.\n");
         }
-
         break;
     }
-
     case 2:
         printf("Enter title keyword: ");
         fgets(keyword, 100, stdin);
         keyword[strcspn(keyword, "\n")] = 0;
-
         searchByTitle(head, keyword);
         break;
 
@@ -372,7 +366,6 @@ void searchMenu()
         printf("Enter author keyword: ");
         fgets(keyword, 100, stdin);
         keyword[strcspn(keyword, "\n")] = 0;
-
         searchByAuthor(head, keyword);
         break;
 
@@ -380,7 +373,6 @@ void searchMenu()
         printf("Enter category keyword: ");
         fgets(keyword, 100, stdin);
         keyword[strcspn(keyword, "\n")] = 0;
-
         searchByCategory(head, keyword);
         break;
 
