@@ -67,6 +67,7 @@ Used for the waiting list system.
 ## 3. Hash Table
 
 Used for faster searching of books by ID.
+By using chaining for suppose collision
 
 ### Why Hash Table?
 - Faster lookup compared to linear search
@@ -75,23 +76,33 @@ Used for faster searching of books by ID.
 ---
  Sorting Algorithm
 
-## Bubble Sort
+## Quick Sort
+The system uses **Quick Sort** to sort books by Book ID or Title and displaying them.
 
-The system uses **Bubble Sort** to sort books by Book ID before displaying them.
-
-### Why Bubble Sort?
-Bubble Sort was selected because:
-- Easy to understand and implement
-- Suitable for small datasets
-- Good for beginner-level Data Structure projects
+### Why Quick Sort?
+Quick Sort was selected because:
+- Efficient for average case with O(n log n) performance
+- Uses low memory — only O(log n)
 - Works well with temporary arrays created from linked lists
+- Good fit for library system where books are added in random order
 
 ### Time Complexity
-| Case | Complexity |
-|------|------------|
-| Best Case | O(n) |
-| Average Case | O(n²) |
-| Worst Case | O(n²) |
+| Case | Complexity | When |
+|------|------------|------|
+| Best Case | O(n log n) | pivot splits evenly every time |
+| Average Case | O(n log n) | normal random data |
+| Worst Case | O(n²) | list is already sorted |
+
+### Comparison with Other Sorting Algorithms
+| Algorithm | Average Case | Memory |
+|-----------|-------------|--------|
+| Quick Sort (ours) | O(n log n) | O(log n) |
+| Merge Sort | O(n log n) | O(n) |
+| Bubble Sort | O(n²) | O(1) |
+| Insertion Sort | O(n²) | O(1) |
+
+Quick Sort uses less memory than Merge Sort and is faster in practice
+than Bubble Sort and Insertion Sort for large datasets.
 
 ---
 
@@ -118,10 +129,22 @@ Bubble Sort was selected because:
 ---
 
 ## Search System
-- Search by Book ID
+
+### Search Functions
+- Search by Book ID (using Hash Table)
 - Search by Title
 - Search by Author
 - Search by Category
+- Search by Availability (show available or borrowed books)
+
+### Sort Functions
+- Sort by Title (A → Z using Quick Sort)
+- Sort by ID (ascending using Quick Sort)
+
+### Hash Table
+- Size: 100 slots
+- Collision handling: Chaining (linked list per bucket)
+- Search by ID: O(1) average, O(n) worst case
 
 ---
 
