@@ -59,6 +59,20 @@ Used for the waiting list system.
 - First Come First Serve (FCFS)
 - Fair order for users waiting for books
 
+### Time Complexity
+| Operation | Complexity |
+|-----------|------------|
+| Search | O(1) |
+| Insert | O(1) |
+| Delete | O(1) |
+
+### Compared with Stack
+
+- Stack uses LIFO (Last In First Out)
+- Latest user would receive the book first
+
+Therefore, queue maintains fairness for users waiting to borrow books.
+
 ### Used In
 - Book waitlist
 
@@ -93,6 +107,8 @@ index = Book ID % TABLE_SIZE
 | Requires sorted data | No | No | Yes |
 | Insert | O(1) | O(1) | O(n) must re-sort |
 | Best for | ID lookup | small datasets | sorted arrays |
+
+Hash Table provides much faster searching performance, especially when the number of books becomes large.
 
 ### Used In
 - Search book by ID
