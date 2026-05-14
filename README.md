@@ -177,7 +177,7 @@ Hash Table provides much faster searching performance, especially when the numbe
 - Delete book from table
 
 ---
- Sorting Algorithm
+# Sorting Algorithm
 
 ## Quick Sort
 The system uses **Quick Sort** to sort books by Book ID or Title and displaying them.
