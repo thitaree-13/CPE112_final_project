@@ -20,6 +20,67 @@ The project demonstrates the use of multiple data structures and file handling i
 
 ---
 
+# Features
+
+## User System
+- Register new users
+- Login system
+- Logout system
+- Prevent duplicate usernames
+- Auto login after registration
+- Store user data in `User.txt`
+
+---
+
+## Book Management
+- Add books
+- Delete books
+- Display all books
+- Books sorted by ID
+- Save books into `books.txt`
+- Load books automatically when program starts
+
+---
+
+## Search System
+
+### Search Functions
+- Search by Book ID (using Hash Table)
+- Search by Title
+- Search by Author
+- Search by Category
+- Search by Availability (show available or borrowed books)
+
+### Sort Functions
+- Sort by Title (A → Z using Quick Sort)
+- Sort by ID (ascending using Quick Sort)
+
+### Hash Table
+- Size: 100 slots
+- Collision handling: Chaining (linked list per bucket)
+- Search by ID: O(1) average, O(n) worst case
+
+---
+
+## Borrow System
+- Borrow books
+- Return books
+- Track borrower
+- Borrow limit per user
+- Waiting list support
+- Auto assign book to next user in queue
+- Track borrower using `borrowedBy`
+- Track borrowed count for each user
+
+---
+
+## My Book List
+Users can view:
+- Currently borrowed books
+- Books in waiting list
+
+---
+
 # Data Structures Used
 
 ## 1. Linked List
@@ -152,66 +213,106 @@ than Bubble Sort and Insertion Sort for large datasets.
 
 ---
 
-# Features
+# How to Compile
 
-## User System
-- Register new users
-- Login system
-- Logout system
-- Prevent duplicate usernames
-- Auto login after registration
-- Store user data in `User.txt`
+bash:
+gcc main.c menu.c book_system.c search.c borrow_system.c user_system.c -o library
+or ./library on terminal
 
----
+# How to Use
 
-## Book Management
-- Add books
-- Delete books
-- Display all books
-- Books sorted by ID
-- Save books into `books.txt`
-- Load books automatically when program starts
+----
 
----
+The program shows a numbered menu.
+Type a number and press Enter.
 
-## Search System
+⸻
 
-### Search Functions
-- Search by Book ID (using Hash Table)
-- Search by Title
-- Search by Author
-- Search by Category
-- Search by Availability (show available or borrowed books)
+## Before Login
 
-### Sort Functions
-- Sort by Title (A → Z using Quick Sort)
-- Sort by ID (ascending using Quick Sort)
+1. Register new account
+2. Login
+3. Exit program
 
-### Hash Table
-- Size: 100 slots
-- Collision handling: Chaining (linked list per bucket)
-- Search by ID: O(1) average, O(n) worst case
+⸻
 
----
+## After Login
 
-## Borrow System
-- Borrow books
-- Return books
-- Track borrower
-- Borrow limit per user
-- Waiting list support
-- Auto assign book to next user in queue
-- Track borrower using `borrowedBy`
-- Track borrowed count for each user
+1. Add new book
+2. Delete book
+3. Display all books
+4. Search books
+5. Borrow book
+6. Return book
+7. My Book List
+8. Logout
+9. Exit program
 
----
+⸻
 
-## My Book List
-Users can view:
-- Currently borrowed books
-- Books in waiting list
+## Example Usage
 
----
+### Register
+
+Create username: alice
+Create password: 1234
+Register success.
+
+⸻
+
+### Login
+
+Username: alice
+Password: 1234
+Login success.
+
+⸻
+
+### Add Book
+
+Enter Book ID: 101
+Enter Title: C Programming
+Enter Author: Dennis Ritchie
+Enter Category: Programming
+Book added successfully!
+
+⸻
+
+### Borrow Book
+
+Enter Book ID: 101
+Book borrowed successfully.
+
+⸻
+
+### Join Waitlist
+
+Book already borrowed.
+Join waitlist? (y/n): y
+Added to waitlist.
+
+⸻
+
+### Return Book
+
+Enter Book ID: 101
+Book returned successfully.
+
+⸻
+
+### Search Book
+
+===== SEARCH MENU =====
+1. Search by ID
+2. Search by Title
+3. Search by Author
+4. Search by Category
+5. Show Available Books
+6. Show Borrowed Books
+7. Sort by Title
+8. Sort by ID
+
+⸻
 
 # File Handling
 
@@ -251,8 +352,3 @@ Data is automatically saved and loaded when the program runs.
 | user_system.h | User structure and functions |
 
 ---
-
-# How to Compile
-
-```bash
-gcc main.c menu.c book_system.c search.c borrow_system.c user_system.c -o library
