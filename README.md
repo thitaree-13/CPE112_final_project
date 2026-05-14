@@ -221,20 +221,14 @@ or ./library on terminal
 
 # How to Use
 
-----
-
 The program shows a numbered menu.
 Type a number and press Enter.
-
-⸻
 
 ## Before Login
 
 1. Register new account
 2. Login
 3. Exit program
-
-⸻
 
 ## After Login
 
@@ -248,60 +242,59 @@ Type a number and press Enter.
 8. Logout
 9. Exit program
 
-⸻
-
 ## Example Usage
 
 ### Register
 
+```text
 Create username: alice
 Create password: 1234
 Register success.
-
-⸻
+```
 
 ### Login
 
+```text
 Username: alice
 Password: 1234
 Login success.
-
-⸻
+```
 
 ### Add Book
 
+```text
 Enter Book ID: 101
 Enter Title: C Programming
 Enter Author: Dennis Ritchie
 Enter Category: Programming
 Book added successfully!
-
-⸻
+```
 
 ### Borrow Book
 
+```text
 Enter Book ID: 101
 Book borrowed successfully.
-
-⸻
+```
 
 ### Join Waitlist
 
+```text
 Book already borrowed.
 Join waitlist? (y/n): y
 Added to waitlist.
-
-⸻
+```
 
 ### Return Book
 
+```text
 Enter Book ID: 101
 Book returned successfully.
-
-⸻
+```
 
 ### Search Book
 
+```text
 ===== SEARCH MENU =====
 1. Search by ID
 2. Search by Title
@@ -311,8 +304,8 @@ Book returned successfully.
 6. Show Borrowed Books
 7. Sort by Title
 8. Sort by ID
+```
 
-⸻
 
 # File Handling
 
