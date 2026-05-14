@@ -215,9 +215,15 @@ than Bubble Sort and Insertion Sort for large datasets.
 
 # How to Compile
 
-bash:
+Paste
+```bash
 gcc main.c menu.c book_system.c search.c borrow_system.c user_system.c -o library
-or ./library on terminal
+```
+or 
+```bash
+./library
+```
+on terminal
 
 # How to Use
 
@@ -343,5 +349,3 @@ Data is automatically saved and loaded when the program runs.
 | borrow_system.h | Borrow system functions |
 | search.h | Search functions |
 | user_system.h | User structure and functions |
-
----
