@@ -2,8 +2,9 @@
 #define BOOK_SYSTEM_H
 
 // ===== WAITLIST =====
-
+#include <stdbool.h>
 #define MAX_WAITLIST 50
+
 
 typedef struct
 {
