@@ -27,6 +27,16 @@ void addBook()
     scanf("%d", &newBook->id);
     getchar();
 
+    // check duplicate ID
+    if (searchByID(newBook->id) != NULL)
+    {
+        printf("Book ID already exists.\n");
+
+        free(newBook);
+
+        return;
+    }
+
     printf("Enter Title: ");
 
     fgets(newBook->title, 100, stdin);
