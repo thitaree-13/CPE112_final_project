@@ -1,3 +1,2 @@
-54321|data|structure|programming|1|-1
-0|ata|crisis|chill|0|2
-123|pe|pea|peaa|0|1
+101|data|crisis|chill|0|1|1|2
+123|pea|pnoiz|game|1|-1|0|

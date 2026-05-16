@@ -1,3 +1,2 @@
-1 Fahsai pass 0
-2 hello world 0
-3 Pnoiz 1234 0
+1 Fahsai pass 1
+2 pnoiz 1mill 0

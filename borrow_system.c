@@ -108,6 +108,8 @@ void borrowBook()
                             &temp->waitlist,
                             currentUser->userID))
                     {
+                        saveBooksToFile();
+
                         printf("Added to waitlist.\n");
                     }
                     else
@@ -163,8 +165,12 @@ void returnBook()
                     dequeueWaitlist(
                         &temp->waitlist);
 
+                temp->available = 0;
+
                 temp->borrowedBy =
                     nextUser;
+
+                saveBooksToFile();
 
                 printf("Book assigned to next waitlist user.\n");
             }

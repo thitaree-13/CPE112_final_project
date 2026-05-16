@@ -124,12 +124,66 @@ void deleteBook()
     printf("Book deleted successfully!\n");
 }
 
+// ===== QUICK SORT FUNCTIONS =====
+
+// swap two book pointers
+void swapBooks(Book **a, Book **b)
+{
+    Book *temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// partition for quick sort
+int partitionBooks(Book *arr[], int low, int high)
+{
+    Book *pivot = arr[high];
+
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        if (arr[j]->id < pivot->id)
+        {
+            i++;
+
+            swapBooks(&arr[i], &arr[j]);
+        }
+    }
+
+    swapBooks(&arr[i + 1], &arr[high]);
+
+    return i + 1;
+}
+
+// quick sort by book ID
+void quickSortBooks(Book *arr[],
+                    int low,
+                    int high)
+{
+    if (low < high)
+    {
+        int pivot =
+            partitionBooks(arr,
+                           low,
+                           high);
+
+        quickSortBooks(arr,
+                       low,
+                       pivot - 1);
+
+        quickSortBooks(arr,
+                       pivot + 1,
+                       high);
+    }
+}
+
 // ===== DISPLAY BOOKS =====
 
 void displayBooks()
 {
-    // count books
     int count = 0;
+
     Book *temp = head;
 
     if (head == NULL)
@@ -138,13 +192,15 @@ void displayBooks()
         return;
     }
 
+    // count books
     while (temp != NULL)
     {
         count++;
+
         temp = temp->next;
     }
 
-    // create array
+    // create array of pointers
     Book *arr[count];
 
     temp = head;
@@ -152,22 +208,12 @@ void displayBooks()
     for (int i = 0; i < count; i++)
     {
         arr[i] = temp;
+
         temp = temp->next;
     }
 
-    // sort by ID (bubble sort)
-    for (int i = 0; i < count - 1; i++)
-    {
-        for (int j = 0; j < count - i - 1; j++)
-        {
-            if (arr[j]->id > arr[j + 1]->id)
-            {
-                Book *swap = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = swap;
-            }
-        }
-    }
+    // quick sort
+    quickSortBooks(arr, 0, count - 1);
 
     printf("\n===== Book List =====\n");
 
@@ -175,18 +221,20 @@ void displayBooks()
     for (int i = 0; i < count; i++)
     {
         printf("\nID: %d\n", arr[i]->id);
-        printf("Title: %s\n", arr[i]->title);
-        printf("Author: %s\n", arr[i]->author);
-        printf("Category: %s\n", arr[i]->category);
+
+        printf("Title: %s\n",
+               arr[i]->title);
+
+        printf("Author: %s\n",
+               arr[i]->author);
+
+        printf("Category: %s\n",
+               arr[i]->category);
 
         printf("Status: %s\n",
-               arr[i]->available ? "Available" : "Borrowed");
-
-        if (!arr[i]->available)
-        {
-            printf("Borrowed By User ID: %d\n",
-                   arr[i]->borrowedBy);
-        }
+               arr[i]->available
+                   ? "Available"
+                   : "Borrowed");
 
         printf("Waitlist Count: %d\n",
                arr[i]->waitlist.count);
@@ -210,13 +258,34 @@ void saveBooksToFile()
     while (temp != NULL)
     {
         fprintf(fp,
-                "%d|%s|%s|%s|%d|%d\n",
+                "%d|%s|%s|%s|%d|%d|%d|",
                 temp->id,
                 temp->title,
                 temp->author,
                 temp->category,
                 temp->available,
-                temp->borrowedBy);
+                temp->borrowedBy,
+                temp->waitlist.count);
+
+        // save queue user IDs
+        for (int i = 0; i < temp->waitlist.count; i++)
+        {
+            int index =
+                (temp->waitlist.front + i)
+                % MAX_WAITLIST;
+
+            fprintf(fp,
+                    "%d",
+                    temp->waitlist.user_ids[index]);
+
+            // comma between IDs
+            if (i < temp->waitlist.count - 1)
+            {
+                fprintf(fp, ",");
+            }
+        }
+
+        fprintf(fp, "\n");
 
         temp = temp->next;
     }
@@ -237,23 +306,28 @@ void loadBooksFromFile()
 
     while (1)
     {
-        Book *newBook = (Book *)malloc(sizeof(Book));
+        Book *newBook =
+            (Book *)malloc(sizeof(Book));
 
         if (newBook == NULL)
         {
             break;
         }
 
+        char queueData[200] = "";
+
         int result = fscanf(fp,
-                            "%d|%99[^|]|%99[^|]|%49[^|]|%d|%d\n",
+                            "%d|%99[^|]|%99[^|]|%49[^|]|%d|%d|%d|%199[^\n]\n",
                             &newBook->id,
                             newBook->title,
                             newBook->author,
                             newBook->category,
                             &newBook->available,
-                            &newBook->borrowedBy);
+                            &newBook->borrowedBy,
+                            &newBook->waitlist.count,
+                            queueData);
 
-        if (result != 6)
+        if (result < 7)
         {
             free(newBook);
             break;
@@ -262,15 +336,40 @@ void loadBooksFromFile()
         // initialize queue
         initWaitQueue(&newBook->waitlist);
 
+        // restore count
+        int count = 0;
+
+        // split queue string
+        if (strlen(queueData) > 0)
+        {
+            char *token = strtok(queueData, ",");
+
+            while (token != NULL)
+            {
+                newBook->waitlist.user_ids[count]
+                    = atoi(token);
+
+                count++;
+
+                token = strtok(NULL, ",");
+            }
+        }
+
+        newBook->waitlist.count = count;
+
+        newBook->waitlist.front = 0;
+
+        newBook->waitlist.rear = count - 1;
+
         // initialize pointers
         newBook->next = NULL;
         newBook->hashNext = NULL;
 
-        // insert into linked list
+        // insert linked list
         newBook->next = head;
         head = newBook;
 
-        // insert into hash table
+        // insert hash table
         insertHash(newBook);
     }
 
